@@ -29,7 +29,7 @@ function createStore (reducer) {
 }
 
 //App Code
-// reducer 
+// todos reducer 
 function todos (state = [], action) {
     switch (action.type) {
         case 'ADD_TODO':
@@ -44,6 +44,7 @@ function todos (state = [], action) {
     }
 }
 
+// goals reducer 
 function goals (state = [], action) {
     switch (action.type) {
         case 'ADD_GOAL':
@@ -55,7 +56,17 @@ function goals (state = [], action) {
     }
 }
 
-const store = createStore(todos);
+// root reducer
+
+function app (state = {}, action) {
+    return {
+        todos: todos(state.todos, action),
+        goals: goals(state.goals, action),
+    }
+}
+
+
+const store = createStore(app);
 store.subscribe(()=>{
     console.log('the new state is: ', store.getState());
 });
@@ -79,3 +90,61 @@ store.dispatch({
     }
 
 });
+
+store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+      id: 0,
+      name: 'Walk the dog',
+      complete: false,
+    }
+  })
+  
+  store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+      id: 1,
+      name: 'Wash the car',
+      complete: false,
+    }
+  })
+  
+  store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+      id: 2,
+      name: 'Go to the gym',
+      complete: true,
+    }
+  })
+  
+  store.dispatch({
+    type: 'REMOVE_TODO',
+    id: 1
+  })
+  
+  store.dispatch({
+    type: 'TOGGLE_TODO',
+    id: 0
+  })
+  
+  store.dispatch({
+    type: 'ADD_GOAL',
+    goal: {
+      id: 0,
+      name: 'Learn Redux'
+    }
+  })
+  
+  store.dispatch({
+    type: 'ADD_GOAL',
+    goal: {
+      id: 1,
+      name: 'Lose 20 pounds'
+    }
+  })
+  
+  store.dispatch({
+    type: 'REMOVE_GOAL',
+    id: 0
+  })
