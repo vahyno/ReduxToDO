@@ -1,5 +1,10 @@
 //Library code
 function createStore (reducer) {
+    // The store should have four parts
+    // 1. The state
+    // 2. Get the state.
+    // 3. Listen to changes on the state.
+    // 4. Update the state
 
     let state;
     let listeners = [];
@@ -26,8 +31,33 @@ function createStore (reducer) {
 //App Code
 // reducer 
 function todos (state = [], action) {
-    if (action.type === "ADD_TODO") {
+    if (action.type === 'ADD_TODO') {
         return state.concat([action.todo]);
     } 
     return state;
 }
+
+const store = createStore(todos);
+store.subscribe(()=>{
+    console.log('the new state is: ', store.getState());
+});
+
+store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+        id: 0,
+        name: 'Learn Redux',
+        complete: false,
+    }
+
+});
+
+store.dispatch({
+    type: 'ADD_TODO',
+    todo: {
+        id: 1,
+        name: 'Read a Book',
+        complete: true,
+    }
+
+});
