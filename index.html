@@ -38,6 +38,7 @@
         const TOGGLE_TODO = 'TOGGLE_TODO';
         const ADD_GOAL = 'ADD_GOAL';
         const REMOVE_GOAL = 'REMOVE_GOAL';
+        const RECEIVE_DATA = 'RECEIVE_DATA';
 
         //action creators
 
@@ -76,7 +77,13 @@
             }
         }
 
-
+        function receiveDataAction(todos, goals) {
+            return {
+                type: RECEIVE_DATA,
+                todos,
+                goals
+            }
+        }
 
         // todos reducer 
         function todos (state = [], action) {
@@ -88,6 +95,8 @@
                 case TOGGLE_TODO:
                     return state.map((todo)=> todo.id !== action.id ? todo :
                         Object.assign({}, todo, {complete: !todo.complete}));
+                case RECEIVE_DATA:
+                    return action.todos;        
                 default:
                     return state;
             }
@@ -100,6 +109,8 @@
                     return state.concat([action.goal]);
                 case REMOVE_GOAL: 
                     return state.filter((goal)=> goal.id !== action.id);
+                case RECEIVE_DATA:
+                    return action.goals;    
                 default:
                     return state;            
             }
@@ -119,7 +130,8 @@
         //     return store.dispatch(action);
 
         // }
-            
+
+        //middleware
         const checker = (store) => (next) => (action) => {
             if (action.type === ADD_TODO && 
                 action.todo.name.toLowerCase().includes('bitcoin')) {
@@ -131,7 +143,7 @@
             }
             return next(action);
         }
-
+        //middleware
         const logger = (store) => (next) => (action) => {
             console.group(action.type);
                 console.log('The action: ', action)
@@ -340,6 +352,15 @@
         class App extends React.Component {
             componentDidMount(){
                 const {store} = this.props;
+
+                Promise.all([
+                    API.fetchTodos(),
+                    API.fetchGoals()
+                ]).then(([todos, goals])=> {
+                    // console.log('todos: ', todos);
+                    // console.log('goals: ', goals);
+                    store.dispatch(receiveDataAction(todos, goals));
+                });
 
                 store.subscribe(()=>this.forceUpdate());
             }
