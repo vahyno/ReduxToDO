@@ -277,10 +277,28 @@
         }
 
         class Goals extends React.Component {
+            addItem = (e) => {
+                e.preventDefault();
+                const name = this.input.value;
+                this.input.value = '';
+
+                const {store} = this.props;
+                store.dispatch(addGoalAction({
+                    id: generateId(),
+                    name,
+                    complete: false,
+                }));
+            }
             render() {
                 return (
                     <div>
-                        GOALS
+                        <h1>Goals</h1>
+                        <input 
+                            type='text' 
+                            placeholder='Add your Goal'
+                            ref={(input) => this.input = input}/>
+                        <button onClick={this.addItem}>Add Goal</button>
+            
                         <List />
                     </div>
                 )
