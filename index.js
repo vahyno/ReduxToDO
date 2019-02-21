@@ -51,10 +51,10 @@ function removeTodoAction (id) {
     }
 }
 
-function toggleTodoAction () {
+function toggleTodoAction (id) {
     return {
         type: TOGGLE_TODO,
-        id: 0,
+        id,
     }
 }
 
