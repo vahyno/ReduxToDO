@@ -131,6 +131,18 @@
             }
         }
 
+        function handleInitialData() {
+            return (dispatch) => {
+                Promise.all([
+                    API.fetchTodos(),
+                    API.fetchGoals()
+                ]).then(([todos, goals])=> {
+                    // console.log('todos: ', todos);
+                    // console.log('goals: ', goals);
+                    dispatch(receiveDataAction(todos, goals));
+                });
+            }
+        }
 
         // todos reducer 
         function todos (state = [], action) {
@@ -305,14 +317,7 @@
             componentDidMount(){
                 const {store} = this.props;
 
-                Promise.all([
-                    API.fetchTodos(),
-                    API.fetchGoals()
-                ]).then(([todos, goals])=> {
-                    // console.log('todos: ', todos);
-                    // console.log('goals: ', goals);
-                    store.dispatch(receiveDataAction(todos, goals));
-                });
+                store.dispatch(handleInitialData());
 
                 store.subscribe(()=>this.forceUpdate());
             }
