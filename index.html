@@ -71,6 +71,31 @@
             }
         }
 
+        function handleAddTodo(name, callB) {
+            return (dispatch) => {
+                return API.saveTodo(name)
+                    .then((todo)=>{
+                        dispatch(addTodoAction(todo));
+                        callB();
+                    })
+                    .catch(()=>{
+                        alert('Something went wrong, please try again.');
+                    })
+            }
+        }
+
+        function handleToggle(id) {
+            return (dispatch) => {
+                dispatch(toggleTodoAction(id));
+                return API.saveTodoToggle(id)
+                    .catch(() => {
+                        dispatch(toggleTodoAction(id));
+                        alert('An Error occured, please try again.')
+                    })
+
+            }
+        }
+
         function handleDeleteTodo(todo) {
             return (dispatch) => {
                 dispatch(removeTodoAction(todo.id));
@@ -212,16 +237,10 @@
         class Todos extends React.Component {
             addItem = (e) => {
                 e.preventDefault();
-                const {store} = this.props;
-
-                return API.saveTodo(this.input.value)
-                    .then((todo)=>{
-                        store.dispatch(addTodoAction(todo));
-                        this.input.value = '';
-                    })
-                    .catch(()=>{
-                        alert('Something went wrong, please try again.');
-                    })
+                this.props.store.dispatch(handleAddTodo(
+                    this.input.value,
+                    () => this.input.value = ''
+                ));
             }
 
             removeItem = (todo) => {
@@ -229,12 +248,7 @@
             }
 
             toggleItem = (id) => {
-                this.props.store.dispatch(toggleTodoAction(id));
-                return API.saveTodoToggle(id)
-                    .catch(() => {
-                        this.props.store.dispatch(toggleTodoAction(id));
-                        alert('An Error occured, please try again.')
-                    })
+                this.props.store.dispatch(handleToggle(id));
             }
 
             render() {
